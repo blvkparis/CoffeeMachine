@@ -3,44 +3,65 @@ package machine;
 import java.util.Scanner;
 
 public class CoffeeMachine {
-    public static int money = 550;
-    public static int water = 400;
-    public static int milk = 540;
-    public static int coffeeBeans = 120;
-    public static int disCups = 9;
+    public Status status;
+    public int money;
+    public int water;
+    public int milk;
+    public int coffeeBeans;
+    public int disCups;
     private final static Scanner scanner = new Scanner(System.in);
+
+    enum Status {
+        ACTION, COFFEE
+    }
+
+    private CoffeeMachine() {
+        this.money = 550;
+        this.water = 400;
+        this.milk = 540;
+        this.coffeeBeans = 120;
+        this.disCups = 9;
+        this.status = Status.ACTION;
+    }
 
     public static void main(String[] args) {
         boolean flag = true;
+        CoffeeMachine coffeeMachine = new CoffeeMachine();
         do {
-            System.out.println("Write action (buy, fill, take, remaining, exit):");
-            switch (scanner.next()) {
-                case "buy":
-                    buyCoffee();
-                    printStats();
-                    break;
-                case "fill":
-                    fillMachine();
-                    printStats();
-                    break;
-                case "take":
-                    takeMoney();
-                    printStats();
-                    break;
-                case "remaining":
-                    printStats();
-                    break;
-                case "exit":
-                    flag = false;
-                    break;
-            }
+            flag = coffeeMachine.processAction();
         } while (flag);
     }
 
-    public static void buyCoffee() {
+    public boolean processAction() {
+        boolean flag = true;
+        System.out.println("Write action (buy, fill, take, remaining, exit):");
+        switch (scanner.next()) {
+            case "buy":
+                this.status = Status.COFFEE;
+                buyCoffee();
+                printStats();
+                break;
+            case "fill":
+                fillMachine();
+                printStats();
+                break;
+            case "take":
+                takeMoney();
+                printStats();
+                break;
+            case "remaining":
+                printStats();
+                break;
+            case "exit":
+                flag = false;
+                break;
+        }
+        return flag;
+    }
+
+    public void buyCoffee() {
         System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:");
         switch (scanner.next()) {
-
             case "1":
                 if (water < 250) System.out.println("Sorry, not enough water!");
                 if (coffeeBeans < 16) System.out.println("Sorry, not enough coffee beans!");
@@ -86,7 +107,7 @@ public class CoffeeMachine {
         }
     }
 
-    public static void fillMachine() {
+    public void fillMachine() {
         System.out.println("Write how many ml of water do you want to add:");
         water += scanner.nextInt();
 
@@ -100,12 +121,12 @@ public class CoffeeMachine {
         disCups += scanner.nextInt();
     }
 
-    public static void takeMoney() {
+    public void takeMoney() {
         System.out.println("I gave you $" + money);
         money = 0;
     }
 
-    public static void printStats() {
+    public void printStats() {
         System.out.println("The coffee machine has:");
         System.out.println(water + " of water");
         System.out.println(milk + " of milk");
